@@ -1,4 +1,4 @@
 .env/
 .vscode/
-resized_images/
+# resized_images/
 test_folder/
