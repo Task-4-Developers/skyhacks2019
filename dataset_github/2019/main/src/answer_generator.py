@@ -38,7 +38,7 @@ labels_task3_2 = [1, 2, 3, 4]
 
 output = []
 
-test1_model = load_model('test1_trained_model_1e.h5')
+test1_model = load_model('test1_model_e2.h5')
 
 def find(name, path):
     for root, _, files in os.walk(path):
@@ -57,7 +57,7 @@ def task_1(partial_output: dict, file_path: str) -> dict:
 
     output_values = []
     for value in prediction[0]:
-        if value > 0.6:
+        if value > 0.8:
             output_values.append(1)
         else:
             output_values.append(0)
