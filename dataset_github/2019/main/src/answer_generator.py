@@ -2,6 +2,10 @@ import csv
 import os
 import logging
 import random
+import numpy as np
+import copy
+import pandas as pd
+import pickle
 from typing import Tuple
 
 __author__ = 'ING_DS_TECH'
@@ -11,8 +15,8 @@ FORMAT = '%(asctime)-15s %(levelname)s %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-input_dir = "\path\to\images"
-answers_file = "\path\to\save\answers\file.csv"
+input_dir = "dataset_pendrive/"
+answers_file = "answers.csv"
 
 labels_task_1 = ['Bathroom', 'Bathroom cabinet', 'Bathroom sink', 'Bathtub', 'Bed', 'Bed frame',
                  'Bed sheet', 'Bedroom', 'Cabinetry', 'Ceiling', 'Chair', 'Chandelier', 'Chest of drawers',
@@ -32,10 +36,10 @@ output = []
 
 
 def task_1(partial_output: dict, file_path: str) -> dict:
-    logger.debug("Performing task 1 for file {0}".format(file_path))
+    logger.debug("Performing Task 1 for file {0}".format(file_path))
 
     for label in labels_task_1:
-        partial_output[label] = 0
+        partial_output[label] = random.randint(0,1) # It's just initialization and it should be initialized with 0 later on
     #
     #
     #	HERE SHOULD BE A REAL SOLUTION
@@ -45,25 +49,47 @@ def task_1(partial_output: dict, file_path: str) -> dict:
     return partial_output
 
 
-def task_2(file_path: str) -> str:
-    logger.debug("Performing task 2 for file {0}".format(file_path))
+def task_2(partial_output: dict, file_path: str) -> str:
+    logger.debug("Performing Task 2 for file {0}".format(file_path))
     #
     #
     #	HERE SHOULD BE A REAL SOLUTION
     #
     #
-    logger.debug("Done with Task 1 for file {0}".format(file_path))
-    return labels_task2[random.randrange(len(labels_task2))]
+    # Open trained model
+    with open("task2_model.pkl", 'rb') as file:
+        model = pickle.load(file)
+
+        adjusted_input = copy.deepcopy(partial_output)
+
+        adjusted_input.pop('filename', None)
+        adjusted_input.pop('Bathroom', None)
+        adjusted_input.pop('Bedroom', None)
+        adjusted_input.pop('Living room', None)
+        adjusted_input.pop('Kitchen', None)
+        adjusted_input.pop('Dining room', None)
+        adjusted_input.pop('House', None)
+
+        for key in adjusted_input:
+            adjusted_input[key] = [adjusted_input[key]]
+
+        predicted_class = model.predict(pd.DataFrame.from_dict(adjusted_input))
+
+        logger.debug("Done with Task 2 for file {0}".format(file_path))
+        return predicted_class[0]
+    
+    logger.debug("Failed with Task 2 for file {0}".format(file_path))
+    return "failed"
 
 
 def task_3(file_path: str) -> Tuple[str, str]:
-    logger.debug("Performing task 3 for file {0}".format(file_path))
+    logger.debug("Performing Task 3 for file {0}".format(file_path))
     #
     #
     #	HERE SHOULD BE A REAL SOLUTION
     #
     #
-    logger.debug("Done with Task 1 for file {0}".format(file_path))
+    logger.debug("Done with Task 3 for file {0}".format(file_path))
     return labels_task3_1[random.randrange(len(labels_task3_1))], labels_task3_2[random.randrange(len(labels_task3_2))]
 
 
@@ -73,12 +99,10 @@ def main():
         for f in fnames:
             if f.endswith(".jpg"):
                 file_path = os.path.join(dirpath, f)
-                output_per_file = {'filename': f,
-                                   'task2_class': task_2(file_path),
-                                   'tech_cond': task_3(file_path)[0],
-                                   'standard': task_3(file_path)[1]
-                                   }
-                output_per_file = task_1(output_per_file, file_path)
+                output_per_file = task_1({'filename': f}, file_path)
+                output_per_file['task2_class'] = task_2(output_per_file, file_path)
+                output_per_file['tech_cond'] = task_3(file_path)[0]
+                output_per_file['standard'] = task_3(file_path)[1]
 
                 output.append(output_per_file)
 
