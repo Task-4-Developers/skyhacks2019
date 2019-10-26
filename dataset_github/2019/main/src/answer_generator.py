@@ -1,4 +1,5 @@
 import csv
+from keras.models import load_model
 import os
 import logging
 import random
@@ -7,6 +8,9 @@ import copy
 import pandas as pd
 import pickle
 from typing import Tuple
+from PIL import Image
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 __author__ = 'ING_DS_TECH'
 __version__ = "201909"
@@ -15,7 +19,7 @@ FORMAT = '%(asctime)-15s %(levelname)s %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-input_dir = "test_dataset/"
+input_dir = "test_data2/"
 answers_file = "answers.csv"
 
 labels_task_1 = ['Bathroom', 'Bathroom cabinet', 'Bathroom sink', 'Bathtub', 'Bed', 'Bed frame',
@@ -34,12 +38,47 @@ labels_task3_2 = [1, 2, 3, 4]
 
 output = []
 
+test1_model = load_model('test1_trained_model_1e.h5')
+
+def find(name, path):
+    for root, _, files in os.walk(path):
+        if name in files:
+            return os.path.join(root, name)
 
 def task_1(partial_output: dict, file_path: str) -> dict:
     logger.debug("Performing Task 1 for file {0}".format(file_path))
 
     for label in labels_task_1:
-        partial_output[label] = random.randint(0,1) # It's just initialization and it should be initialized with 0 later on
+        partial_output[label] = 0 
+
+    image = Image.open(file_path)
+    input_array = [np.array(image)]
+    prediction = test1_model.predict(np.array(input_array))
+
+    output_values = []
+    for value in prediction[0]:
+        if value > 0.6:
+            output_values.append(1)
+        else:
+            output_values.append(0)
+
+    labels = copy.deepcopy(labels_task_1)
+    labels.remove('Bathroom')
+    labels.remove('Bedroom')
+    labels.remove('Dining room')
+    labels.remove('House')
+    labels.remove('Kitchen')
+    labels.remove('Living room')
+
+    print("Labels length: ")
+    print(len(labels))
+    print("Output values length: ")
+    print(len(output_values))
+
+    index = 0
+    for label in labels:
+        partial_output[label] = output_values[index]
+        index = index + 1
     #
     #
     #	HERE SHOULD BE A REAL SOLUTION
@@ -74,6 +113,19 @@ def task_2(partial_output: dict, file_path: str) -> str:
             adjusted_input[key] = [adjusted_input[key]]
 
         predicted_class = model.predict(pd.DataFrame.from_dict(adjusted_input))
+
+        if predicted_class == 'living_room':
+            partial_output['Living room'] = 1
+        if predicted_class == 'kitchen':
+            partial_output['Kitchen'] = 1
+        if predicted_class == 'house':
+            partial_output['House'] = 1
+        if predicted_class == 'dinning_room':
+            partial_output['Dinning room'] = 1
+        if predicted_class == 'bedroom':
+            partial_output['Bedroom'] = 1
+        if predicted_class == 'bathroom':
+            partial_output['Bathroom'] = 1
 
         logger.debug("Done with Task 2 for file {0}".format(file_path))
         return predicted_class[0]
