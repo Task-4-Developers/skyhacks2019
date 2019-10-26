@@ -1,5 +1,0 @@
-exception: dataset_pendrive\bonus task\dinning_room\051020222D17522FDED58A90312D6E5F2E51E497.jpg
-exception: dataset_pendrive\bonus task\kitchen\FD2B44C4AFA9E31624F7CCE6B7975FEA895D57A7.jpg
-exception: dataset_pendrive\bonus task\living_room\ECFA3841288314C460E0A7B2CC2977C36FED56B3.jpg
-exception: dataset_pendrive\bonus task\living_room\86A9BB7D63564E668598641C7BC0806E7ABCEBC1.jpg
-exception: dataset_pendrive\bonus task\living_room\6C9BADB559043127FE6C5ACF4FD7C7DAF29B057A.jpg
