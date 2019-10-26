@@ -124,6 +124,13 @@ print(classification_report(Y_validation, predictions))
 
 
 # %%
+# Train model with all the data
+
+model = LogisticRegression(solver='liblinear', multi_class='ovr')
+model.fit(X, Y)
+
+
+# %%
 # Print a random prediction
 
 print(model.predict(array[-2:-1,1:]))
