@@ -2,6 +2,9 @@ import csv
 import os
 import logging
 import random
+import numpy as np
+import copy
+import pandas as pd
 import pickle
 from typing import Tuple
 
@@ -12,7 +15,7 @@ FORMAT = '%(asctime)-15s %(levelname)s %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-input_dir = "resizedimages/"
+input_dir = "dataset_pendrive/"
 answers_file = "answers.csv"
 
 labels_task_1 = ['Bathroom', 'Bathroom cabinet', 'Bathroom sink', 'Bathtub', 'Bed', 'Bed frame',
@@ -36,7 +39,7 @@ def task_1(partial_output: dict, file_path: str) -> dict:
     logger.debug("Performing Task 1 for file {0}".format(file_path))
 
     for label in labels_task_1:
-        partial_output[label] = 0
+        partial_output[label] = random.randint(0,1) # It's just initialization and it should be initialized with 0 later on
     #
     #
     #	HERE SHOULD BE A REAL SOLUTION
@@ -54,12 +57,26 @@ def task_2(partial_output: dict, file_path: str) -> str:
     #
     #
     # Open trained model
-    with open("../../../../task2_model.pkl", 'rb') as file:  
+    with open("task2_model.pkl", 'rb') as file:
         model = pickle.load(file)
-        predicted_class = model.predict(partial_output)
+
+        adjusted_input = copy.deepcopy(partial_output)
+
+        adjusted_input.pop('filename', None)
+        adjusted_input.pop('Bathroom', None)
+        adjusted_input.pop('Bedroom', None)
+        adjusted_input.pop('Living room', None)
+        adjusted_input.pop('Kitchen', None)
+        adjusted_input.pop('Dining room', None)
+        adjusted_input.pop('House', None)
+
+        for key in adjusted_input:
+            adjusted_input[key] = [adjusted_input[key]]
+
+        predicted_class = model.predict(pd.DataFrame.from_dict(adjusted_input))
 
         logger.debug("Done with Task 2 for file {0}".format(file_path))
-        return predicted_class
+        return predicted_class[0]
     
     logger.debug("Failed with Task 2 for file {0}".format(file_path))
     return "failed"
