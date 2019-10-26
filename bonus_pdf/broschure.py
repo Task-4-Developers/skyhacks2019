@@ -25,7 +25,7 @@ def generate_json(flat_name):
     filename="bonus_pdf/%s_brochure.html"%flat_name
     
     #this finds all .jpg and puts them into flat_rooms
-    flat_path="bonus_pdf\\main_task\\input\\%s\\"%flat_name
+    flat_path="bonus_pdf/main_task/input/%s/"%flat_name
     flat_rooms=[]
     for _,_,f in os.walk(flat_path):
         for file in f:
@@ -33,7 +33,7 @@ def generate_json(flat_name):
                 if ".json" in file: 
                     continue
                 flat_rooms.append(file)
-                # print(file)
+                print(file)
     
     with open(filename,"w") as brochure:
 
@@ -45,7 +45,9 @@ def generate_json(flat_name):
         with open("bonus_pdf/brochure_style.css") as css_style:
             for lines in css_style.readlines():
                 brochure.write(lines)
-        brochure.write("</style><head>")
+        brochure.write("</style>")
+
+        brochure.write("<link href='https://fonts.googleapis.com/css?family=Prata|Roboto&display=swap' rel='stylesheet'> <head>")
 
         brochure.write("<body>")
 
@@ -53,15 +55,16 @@ def generate_json(flat_name):
             + "<h1> %s </h1></div>\n" % flat_name)
         for image_filename in flat_rooms:
             # print(image_filename)
-            image_path=os.path.abspath("bonus_pdf\\main_task\\input\\%s\\%s"%(flat_name,image_filename))
-            brochure.write("<div class=\"grid-container\">\n")
-            brochure.write("<div class=\"grid-item\"><img src=\"%s\" height=\"%s\" weight=\"%s\" /></div>" % (image_path,300,300)+"\n")
+            image_path=os.path.abspath("bonus_pdf/main_task/input/%s/%s"%(flat_name,image_filename))
+            brochure.write("<div class=\"room grid-container\">\n")
+            brochure.write("<div class=\"grid-item image-box\"><img class='image' src=\"%s\" /></div>" % (image_path)+"\n")
+            # brochure.write("<div class=\"grid-item image-box\"><img class='image' src=\"%s\" height=\"%s\" weight=\"%s\" /></div>" % (image_path,300,300)+"\n")
             #process json
             with open(image_path+'.json', 'r') as f:
                 distros_dict = json.load(f)
             #this prints one room
             #Text begins here: room header
-            brochure.write("<div class=\"grid-item\">")
+            brochure.write("<div class=\"grid-item description-box\">")
             brochure.write("<h1> This %s %s contains:</h1>\n" %( nlp.give_adjective(distros_dict[0]['score']),distros_dict[0]['name']))
             brochure.write("<ul>")
             for distro in distros_dict[1:]:
@@ -74,12 +77,19 @@ def generate_json(flat_name):
 
 def to_pdf(htmlfilename):
     #dont even think about changing this
-    wkhtmltopdf_path="bonus_pdf\\wkhtmltopdf\\bin\\wkhtmltopdf.exe"
-    wkhtmltopdf_path=os.path.abspath(wkhtmltopdf_path)
-    config = pdfkit.configuration(wkhtmltopdf=wkhtmltopdf_path)
+    # wkhtmltopdf_path="bonus_pdf\\wkhtmltopdf\\bin\\wkhtmltopdf.exe"
+    # wkhtmltopdf_path=os.path.abspath(wkhtmltopdf_path)
+    # config = pdfkit.configuration(wkhtmltopdf=wkhtmltopdf_path)
     #generating pdf
-    pdfkit.from_file(htmlfilename,htmlfilename.replace(".html",".pdf"),configuration=config)
 
+<<<<<<< HEAD
 generate_json("test_1")
+=======
+    #,configuration=config
+    pdfkit.from_file(htmlfilename,htmlfilename.replace(".html",".pdf"))
+
+# generate_html("test_1")
+generate_html("test_1")
+>>>>>>> Add styling primary styles to bonus task
 
 # to_pdf(filename)
