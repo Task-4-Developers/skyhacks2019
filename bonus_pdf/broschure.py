@@ -20,7 +20,7 @@ class NLP:
 
 
 
-def generate_html(flat_name):
+def generate_json(flat_name):
     nlp=NLP()
     filename="bonus_pdf/%s_brochure.html"%flat_name
     
@@ -80,6 +80,6 @@ def to_pdf(htmlfilename):
     #generating pdf
     pdfkit.from_file(htmlfilename,htmlfilename.replace(".html",".pdf"),configuration=config)
 
-generate_html("test_1")
+generate_json("test_1")
 
 # to_pdf(filename)
