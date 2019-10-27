@@ -8,7 +8,41 @@ import copy
 import pandas as pd
 import pickle
 from typing import Tuple
+import time
 from PIL import Image
+
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.layers import Dropout
+from keras.layers import MaxPooling2D
+from keras.layers import Conv2D
+from keras.layers import Flatten
+from keras.layers import Activation
+
+import numpy as np
+from PIL import Image
+
+def define_model():
+    model = Sequential()
+    model.add(Conv2D(32, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same',
+                     input_shape=(512, 512, 3)))
+    model.add(MaxPooling2D((2, 2)))
+
+    model.add(Conv2D(64, (2, 2)))
+    model.add(Activation('relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+
+    model.add(Flatten())
+    model.add(Dense(256, activation='relu', kernel_initializer='he_uniform'))
+    model.add(Dense(128, activation='relu', kernel_initializer='he_uniform'))
+    model.add(Dense(64, activation='sigmoid'))
+    model.add(Dense(47, activation='sigmoid'))
+    # compile model
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+    model.load_weights('weights-02-0.2155-bigger.hdf5')
+
+    return model
+
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
@@ -38,7 +72,7 @@ labels_task3_2 = [1, 2, 3, 4]
 
 output = []
 
-test1_model = load_model('test1_trained_model_1e.h5')
+test1_model = define_model()
 
 def find(name, path):
     for root, _, files in os.walk(path):
@@ -53,11 +87,15 @@ def task_1(partial_output: dict, file_path: str) -> dict:
 
     image = Image.open(file_path)
     input_array = [np.array(image)]
+
     prediction = test1_model.predict(np.array(input_array))
+    print("Model1 prediction:")
+    print(prediction[0].dtype)
+    print(prediction[0])
 
     output_values = []
     for value in prediction[0]:
-        if value > 0.6:
+        if value > 0.8:
             output_values.append(1)
         else:
             output_values.append(0)
@@ -79,6 +117,10 @@ def task_1(partial_output: dict, file_path: str) -> dict:
     for label in labels:
         partial_output[label] = output_values[index]
         index = index + 1
+
+    print("Partial output:")
+    print(partial_output)
+
     #
     #
     #	HERE SHOULD BE A REAL SOLUTION
@@ -112,20 +154,25 @@ def task_2(partial_output: dict, file_path: str) -> str:
         for key in adjusted_input:
             adjusted_input[key] = [adjusted_input[key]]
 
+
+
         predicted_class = model.predict(pd.DataFrame.from_dict(adjusted_input))
 
-        if predicted_class == 'living_room':
+        if predicted_class[0] == 'living_room':
             partial_output['Living room'] = 1
-        if predicted_class == 'kitchen':
+        if predicted_class[0] == 'kitchen':
             partial_output['Kitchen'] = 1
-        if predicted_class == 'house':
+        if predicted_class[0] == 'house':
             partial_output['House'] = 1
-        if predicted_class == 'dinning_room':
-            partial_output['Dinning room'] = 1
-        if predicted_class == 'bedroom':
+        if predicted_class[0] == 'dining_room':
+            partial_output['Dining room'] = 1
+        if predicted_class[0] == 'bedroom':
             partial_output['Bedroom'] = 1
-        if predicted_class == 'bathroom':
+        if predicted_class[0] == 'bathroom':
             partial_output['Bathroom'] = 1
+
+        if predicted_class[0] == 'dining_room':
+            predicted_class[0] = 'dinning_room'
 
         logger.debug("Done with Task 2 for file {0}".format(file_path))
         return predicted_class[0]
@@ -157,6 +204,7 @@ def main():
                 output_per_file['standard'] = task_3(file_path)[1]
 
                 output.append(output_per_file)
+
 
     with open(answers_file, 'w', newline='') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=['filename', 'standard', 'task2_class', 'tech_cond'] + labels_task_1)
