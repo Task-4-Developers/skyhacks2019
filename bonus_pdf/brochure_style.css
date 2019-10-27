@@ -1,30 +1,83 @@
 body {
-    background-color:blueviolet;
+  background: rgb(172, 189, 134);
+  background: linear-gradient(
+    147deg,
+    rgba(172, 189, 134, 1) 0%,
+    rgba(49, 101, 90, 1) 100%
+  );
+  text-align: center;
+  font-family: "Roboto", sans-serif;
+  color: #28544b;
 }
+
+li {
+  list-style-type: none;
+}
+/* #28544b */
+/* #acbd86 */
+/* #ffd6a0 */
+/* #ffa06f   */
 
 .flat-header {
-    text-align: center;
-    font-size: 40px;
-    border: chocolate;
-    border-width: 3px;
-    color: red;
+  text-align: center;
+  /* align-self: center; */
+  display: inline-block;
+  font-size: 50px;
+  border: #ffd6a0;
+  color: #ffa06f;
+
+  text-shadow: 2px 2px 7px rgba(40, 84, 75, 0.71);
+  /* box-shadow: 2px 2px 5px rgba(40, 84, 75, 0.71); */
+
+  /* border-radius: 20px; */
+  /* color: red; */
 }
+
+.room {
+  /* background-color: #2196f3; */
+  /* background-color: #ffd6a0; */
+  /* opacity: 0 */
+  padding: 10px;
+  width: 100%;
+  text-align: center;
+  border-radius: 10%;
+  margin: 10px;
+  /* height: 1vh; */
+}
+
 .grid-container {
-    display: grid;
-    grid-template-columns: auto auto;
-    background-color: #2196F3;
-    padding: 10px;
-  }
-/* .grid-container {
-    display: grid;
-    grid-template-columns: auto auto;
-    background-color: #2196F3;
-    padding: 10px;
-  } */
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 10px;
+  /* grid-template-columns: auto auto; */
+
+  /* grid-template-areas: "pic description"; */
+}
+
+.image-box {
+  /* grid-area: pic; */
+  /* width: 30px; */
+  padding: 20px 10% 10px;
+}
+.image {
+  align-self: middle;
+  width: 400px;
+  border-radius: 10px;
+  box-shadow: 2px 2px 5px rgba(40, 84, 75, 0.71);
+}
+
+.description-box {
+  padding: 20px;
+  width: 50%;
+  /* grid-area: description; */
+  /* text-align: right; */
+}
 
 .grid-item {
-    background-color: rgba(255, 255, 255, 0.8);
-    font-size: 25px;
-    padding: 10px;
-    text-align: right;
-  }
+  /* background-color: rgba(255, 255, 255, 0.8); */
+  font-size: 25px;
+  padding: 10px;
+  text-align: right;
+}
