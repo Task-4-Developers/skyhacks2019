@@ -22,8 +22,9 @@ def define_model():
     model.add(MaxPooling2D(pool_size=(2, 2)))
 
     model.add(Flatten())
+    model.add(Dense(256, activation='relu', kernel_initializer='he_uniform'))
     model.add(Dense(128, activation='relu', kernel_initializer='he_uniform'))
-    model.add(Dense(64, activation='relu', kernel_initializer='he_uniform'))
+    model.add(Dense(64, activation='sigmoid'))
     model.add(Dense(47, activation='sigmoid'))
     # compile model
     opt = SGD(lr=0.001, momentum=0.9)
