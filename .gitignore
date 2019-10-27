@@ -4,3 +4,4 @@
 test_folder/
 *.hdf5
 *.h5
+.venv/
