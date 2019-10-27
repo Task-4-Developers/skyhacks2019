@@ -1,7 +1,7 @@
 .env/
 .venv/
+.DS_Store
 .vscode/
-# resized_images/
 test_folder/
 *.hdf5
 *.h5
